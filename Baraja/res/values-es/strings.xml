@@ -6,7 +6,7 @@
     <string name="title_activity_splash_view">Baraja</string>
     <string name="title_activity_main">Baraja</string>
     <string name="title_activity_game">Baraja</string>
-    <string name="play">Play</string>
-    <string name="credits">Credits</string>
+    <string name="play">Jugar</string>
+    <string name="credits">Creditos</string>
 
 </resources>

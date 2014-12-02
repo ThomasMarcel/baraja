@@ -11,15 +11,63 @@ public final class R {
     public static final class attr {
     }
     public static final class drawable {
-        public static final int ic_launcher=0x7f020000;
+        public static final int card_101=0x7f020000;
+        public static final int card_102=0x7f020001;
+        public static final int card_103=0x7f020002;
+        public static final int card_104=0x7f020003;
+        public static final int card_105=0x7f020004;
+        public static final int card_106=0x7f020005;
+        public static final int card_107=0x7f020006;
+        public static final int card_108=0x7f020007;
+        public static final int card_109=0x7f020008;
+        public static final int card_110=0x7f020009;
+        public static final int card_201=0x7f02000a;
+        public static final int card_202=0x7f02000b;
+        public static final int card_203=0x7f02000c;
+        public static final int card_204=0x7f02000d;
+        public static final int card_205=0x7f02000e;
+        public static final int card_206=0x7f02000f;
+        public static final int card_207=0x7f020010;
+        public static final int card_208=0x7f020011;
+        public static final int card_209=0x7f020012;
+        public static final int card_210=0x7f020013;
+        public static final int card_301=0x7f020014;
+        public static final int card_302=0x7f020015;
+        public static final int card_303=0x7f020016;
+        public static final int card_304=0x7f020017;
+        public static final int card_305=0x7f020018;
+        public static final int card_306=0x7f020019;
+        public static final int card_307=0x7f02001a;
+        public static final int card_308=0x7f02001b;
+        public static final int card_309=0x7f02001c;
+        public static final int card_310=0x7f02001d;
+        public static final int card_401=0x7f02001e;
+        public static final int card_402=0x7f02001f;
+        public static final int card_403=0x7f020020;
+        public static final int card_404=0x7f020021;
+        public static final int card_405=0x7f020022;
+        public static final int card_406=0x7f020023;
+        public static final int card_407=0x7f020024;
+        public static final int card_408=0x7f020025;
+        public static final int card_409=0x7f020026;
+        public static final int card_410=0x7f020027;
+        public static final int card_back=0x7f020028;
+        public static final int card_front=0x7f020029;
+        public static final int ic_launcher=0x7f02002a;
     }
     public static final class layout {
-        public static final int activity_splash=0x7f030000;
-        public static final int view_splash=0x7f030001;
+        public static final int activity_game=0x7f030000;
+        public static final int activity_main=0x7f030001;
+        public static final int activity_splash=0x7f030002;
+        public static final int view_splash=0x7f030003;
     }
     public static final class string {
         public static final int app_name=0x7f040000;
+        public static final int credits=0x7f040006;
         public static final int hello_world=0x7f040001;
+        public static final int play=0x7f040005;
+        public static final int title_activity_game=0x7f040004;
+        public static final int title_activity_main=0x7f040003;
         public static final int title_activity_splash_view=0x7f040002;
     }
     public static final class style {
