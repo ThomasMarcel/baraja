@@ -8,5 +8,6 @@
     <string name="title_activity_game">Baraja</string>
     <string name="play">Jugar</string>
     <string name="credits">Creditos</string>
+    <string name="end_turn">End turn</string>
 
 </resources>

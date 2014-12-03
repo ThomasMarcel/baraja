@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -32,7 +33,10 @@ public class GameView extends View {
 	
 	private int scaledCardW, scaledCardH;
 	
-	Paint mPaint;
+	private Paint mPaint, textPaint;
+	
+	private static String stringEndTurn;
+	private Rect endTurnBounds;
 
 	public GameView(Context context) {
 		super(context);
@@ -40,9 +44,20 @@ public class GameView extends View {
 		
 		mContext = context;
 		
+		stringEndTurn = mContext.getString(R.string.end_turn);
+		
 		scale = mContext.getResources().getDisplayMetrics().density;
 		
 		initCardsNumber = 8;
+		
+		textPaint = new Paint();
+		textPaint.setAntiAlias(true);
+		textPaint.setTextAlign(Paint.Align.LEFT);
+		textPaint.setStyle(Paint.Style.STROKE);
+		textPaint.setTextSize(scale * 30);
+		textPaint.setColor(Color.WHITE);
+		endTurnBounds = new Rect();
+		textPaint.getTextBounds(stringEndTurn, 0, stringEndTurn.length(), endTurnBounds);
 	}
 	
 	@Override
@@ -59,11 +74,12 @@ public class GameView extends View {
 	protected void onDraw(Canvas canvas) {
 		canvas.drawColor(Color.DKGRAY);
 		mPaint = new Paint();
+		canvas.drawText(stringEndTurn, screenWidth - endTurnBounds.width() - 15, screenHeight - 15, textPaint);
 		
 		for (int i = 0; i < hand.size(); i++) {
-			canvas.drawBitmap(hand.get(i).getBitmap(), (float) (i * (scaledCardW + 5)), (float) (screenHeight - scaledCardH - 15), mPaint);
+			canvas.drawBitmap(hand.get(i).getBitmap(), (float) (i * (scaledCardW + 5)), (float) ((screenHeight - scaledCardH - endTurnBounds.height()) - 20), mPaint);
 			if (i == movingCardIdx) {
-				canvas.drawBitmap(hand.get(i).getBitmap(), movingX, movingY, mPaint);
+				canvas.drawBitmap(hand.get(i).getBitmap(), movingX - (scaledCardW / 2), movingY - (scaledCardH / 2), mPaint);
 			}
 		}
 		
@@ -80,8 +96,8 @@ public class GameView extends View {
 			for (int i = 0; i < hand.size(); i++) {
 				if (x > i * (scaledCardW + 5) &&
 						x < (i * (scaledCardW + 5)) + scaledCardW &&
-						y > (screenHeight - scaledCardH - 15) &&
-						y < (screenHeight - scaledCardH - 15) + scaledCardH) {
+						y > (screenHeight - scaledCardH - endTurnBounds.height() - 20) &&
+						y < (screenHeight - scaledCardH - endTurnBounds.height() - 20) + scaledCardH) {
 					movingCardIdx = i;
 					movingX = x;
 					movingY = y;
