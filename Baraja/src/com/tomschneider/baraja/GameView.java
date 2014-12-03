@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.view.MotionEvent;
 import android.view.View;
 
 public class GameView extends View {
@@ -61,9 +62,49 @@ public class GameView extends View {
 		
 		for (int i = 0; i < hand.size(); i++) {
 			canvas.drawBitmap(hand.get(i).getBitmap(), (float) (i * (scaledCardW + 5)), (float) (screenHeight - scaledCardH - 15), mPaint);
+			if (i == movingCardIdx) {
+				canvas.drawBitmap(hand.get(i).getBitmap(), movingX, movingY, mPaint);
+			}
 		}
 		
 		invalidate();
+	}
+	
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		int x = (int) event.getX();
+		int y = (int) event.getY();
+		
+		switch (event.getAction()) {
+		case MotionEvent.ACTION_DOWN:
+			for (int i = 0; i < hand.size(); i++) {
+				if (x > i * (scaledCardW + 5) &&
+						x < (i * (scaledCardW + 5)) + scaledCardW &&
+						y > (screenHeight - scaledCardH - 15) &&
+						y < (screenHeight - scaledCardH - 15) + scaledCardH) {
+					movingCardIdx = i;
+					movingX = x;
+					movingY = y;
+				}
+			}
+			break;
+		
+		case MotionEvent.ACTION_UP:
+			if (movingCardIdx >= 0 &&
+					y < screenHeight * 3 / 4) {
+				hand.remove(movingCardIdx);
+			}
+			movingCardIdx = -1;
+			break;
+			
+		case MotionEvent.ACTION_MOVE:
+			movingX = x;
+			movingY = y;
+			break;
+		}
+		
+		invalidate();
+		return true;
 	}
 	
 	private void initCards() {
