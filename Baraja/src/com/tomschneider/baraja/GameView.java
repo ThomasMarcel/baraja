@@ -22,7 +22,7 @@ public class GameView extends View {
 	private int screenWidth, screenHeight;
 	
 	private ArrayList<Card> deck = new ArrayList<Card>();
-	private ArrayList<Card> discardPile = new ArrayList<Card>();
+	private ArrayList<Card> cardsPlayed = new ArrayList<Card>();
 	private ArrayList<Card> hand = new ArrayList<Card>();
 	
 	private int initCardsNumber;
@@ -37,6 +37,11 @@ public class GameView extends View {
 	
 	private static String stringEndTurn;
 	private Rect endTurnBounds;
+	
+	private Bitmap cardBack;
+	
+	private boolean mTurn;
+	private ArrayList<Card> cardDrawn = new ArrayList<Card>();
 
 	public GameView(Context context) {
 		super(context);
@@ -58,6 +63,9 @@ public class GameView extends View {
 		textPaint.setColor(Color.WHITE);
 		endTurnBounds = new Rect();
 		textPaint.getTextBounds(stringEndTurn, 0, stringEndTurn.length(), endTurnBounds);
+		
+		//mTurn = new Random().nextBoolean();
+		mTurn = true;
 	}
 	
 	@Override
@@ -65,6 +73,12 @@ public class GameView extends View {
         super.onSizeChanged(w, h, oldW, oldH);
         screenWidth = w;
         screenHeight = h;
+        
+        scaledCardW = (int) (screenWidth / 10);
+		scaledCardH = (int) (scaledCardW * 1.28);
+        
+        Bitmap tempBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.card_back);
+        cardBack = Bitmap.createScaledBitmap(tempBitmap, scaledCardW, scaledCardH, false);
         
         initCards();
         dealCards();
@@ -76,8 +90,22 @@ public class GameView extends View {
 		mPaint = new Paint();
 		canvas.drawText(stringEndTurn, screenWidth - endTurnBounds.width() - 15, screenHeight - 15, textPaint);
 		
+		// Draw the pickup pile
+		if (! deck.isEmpty()) {
+			canvas.drawBitmap(cardBack, (screenWidth / 2) - scaledCardW - 5, 
+					((screenHeight / 4) - (scaledCardH / 2)), mPaint);
+		}
+		
+		if (! cardDrawn.isEmpty()) {
+			canvas.drawBitmap(cardDrawn.get(0).getBitmap(), (screenWidth / 2) + 5,
+					((screenHeight / 4) - (scaledCardH / 2)), mPaint);
+		}
+		
+		// Draw the player's hand
 		for (int i = 0; i < hand.size(); i++) {
 			canvas.drawBitmap(hand.get(i).getBitmap(), (float) (i * (scaledCardW + 5)), (float) ((screenHeight - scaledCardH - endTurnBounds.height()) - 20), mPaint);
+			
+			// If the user clicked on a card, draw an extra card of the same tipe
 			if (i == movingCardIdx) {
 				canvas.drawBitmap(hand.get(i).getBitmap(), movingX - (scaledCardW / 2), movingY - (scaledCardH / 2), mPaint);
 			}
@@ -93,14 +121,25 @@ public class GameView extends View {
 		
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
-			for (int i = 0; i < hand.size(); i++) {
-				if (x > i * (scaledCardW + 5) &&
-						x < (i * (scaledCardW + 5)) + scaledCardW &&
-						y > (screenHeight - scaledCardH - endTurnBounds.height() - 20) &&
-						y < (screenHeight - scaledCardH - endTurnBounds.height() - 20) + scaledCardH) {
-					movingCardIdx = i;
-					movingX = x;
-					movingY = y;
+			if (mTurn) {
+				for (int i = 0; i < hand.size(); i++) {
+					if (x > i * (scaledCardW + 5) &&
+							x < (i * (scaledCardW + 5)) + scaledCardW &&
+							y > (screenHeight - scaledCardH - endTurnBounds.height() - 20) &&
+							y < (screenHeight - scaledCardH - endTurnBounds.height() - 20) + scaledCardH) {
+						movingCardIdx = i;
+						movingX = x;
+						movingY = y;
+					}
+				}
+				
+				if (movingCardIdx < 0) {
+					if (x > (screenWidth / 2) - scaledCardW - 5 &&
+							x < (screenWidth / 2) - 5 &&
+							y > ((screenHeight / 4) - (scaledCardH / 2)) &&
+							y < ((screenHeight / 4) + (scaledCardH / 2))) {
+						drawCard(cardDrawn);
+					}
 				}
 			}
 			break;
@@ -130,8 +169,6 @@ public class GameView extends View {
 				Card tempCard = new Card(tempId);
 				int resourceId = getResources().getIdentifier("card_" + tempId, "drawable", mContext.getPackageName());
 				Bitmap tempBitmap = BitmapFactory.decodeResource(mContext.getResources(), resourceId);
-				scaledCardW = (int) (screenWidth / 10);
-				scaledCardH = (int) (scaledCardW * 1.28);
 				Bitmap scaledBitmap = Bitmap.createScaledBitmap(tempBitmap, scaledCardW, scaledCardH, false);
 				tempCard.setBitmap(scaledBitmap);
 				deck.add(tempCard);
