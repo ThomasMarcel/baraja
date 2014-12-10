@@ -2,7 +2,7 @@ package com.tomschneider.baraja;
 
 import android.graphics.Bitmap;
 
-public class Card {
+public class Card implements Comparable<Card> {
 	/*
 	 * 101 - 110: Oros
 	 * 201 - 210: Bastos
@@ -39,5 +39,22 @@ public class Card {
 	
 	public int getRank() {
 		return rank;
+	}
+	
+	@Override
+	public String toString() {
+		return "Card " + getId();
+	}
+
+	@Override
+	public int compareTo(Card another) {
+		// TODO Auto-generated method stub
+		if (getId() < another.getId()) {
+			return -1;
+		} else if (getId() == another.getId()) {
+			return 0;
+		} else {
+			return 1;
+		}
 	}
 }

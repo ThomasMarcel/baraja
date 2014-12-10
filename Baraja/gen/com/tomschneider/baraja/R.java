@@ -65,6 +65,7 @@ public final class R {
         public static final int app_name=0x7f040000;
         public static final int credits=0x7f040006;
         public static final int end_turn=0x7f040007;
+        public static final int error_no_drawn_card=0x7f040008;
         public static final int hello_world=0x7f040001;
         public static final int play=0x7f040005;
         public static final int title_activity_game=0x7f040004;

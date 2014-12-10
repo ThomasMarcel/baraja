@@ -12,11 +12,15 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 public class GameView extends View {
 	private Context mContext;
+	
+	private static final String TAG = "Baraja";
 	
 	private float scale;
 	private int screenWidth, screenHeight;
@@ -93,6 +97,8 @@ public class GameView extends View {
 	protected void onDraw(Canvas canvas) {
 		canvas.drawColor(Color.DKGRAY);
 		mPaint = new Paint();
+		
+		// Draw the end turn button
 		canvas.drawText(stringEndTurn, screenWidth - endTurnBounds.width() - 15, screenHeight - 15, textPaint);
 		
 		// Draw the pickup pile
@@ -117,7 +123,7 @@ public class GameView extends View {
 		
 		// Draw the player's hand
 		for (int i = 0; i < hand.size(); i++) {
-			canvas.drawBitmap(hand.get(i).getBitmap(), (float) (i * (scaledCardW + 5)), (float) ((screenHeight - scaledCardH - endTurnBounds.height()) - 20), mPaint);
+			canvas.drawBitmap(hand.get(i).getBitmap(), (float) (i * (scaledCardW + 5)), (float) ((screenHeight - scaledCardH - (endTurnBounds.height() * 2))), mPaint);
 			
 			// If the user clicked on a card, draw an extra card of the same tipe
 			if (i == movingCardIdx) {
@@ -139,8 +145,8 @@ public class GameView extends View {
 				for (int i = 0; i < hand.size(); i++) {
 					if (x > i * (scaledCardW + 5) &&
 							x < (i * (scaledCardW + 5)) + scaledCardW &&
-							y > (screenHeight - scaledCardH - endTurnBounds.height() - 20) &&
-							y < (screenHeight - scaledCardH - endTurnBounds.height() - 20) + scaledCardH) {
+							y > (screenHeight - scaledCardH - (2 * endTurnBounds.height())) &&
+							y < (screenHeight - scaledCardH - (2 * endTurnBounds.height())) + scaledCardH) {
 						movingCardIdx = i;
 						movingX = x;
 						movingY = y;
@@ -167,13 +173,24 @@ public class GameView extends View {
 							}
 						}
 					}
+					
+					if (x > screenWidth - endTurnBounds.width() - 15 &&
+							x < screenWidth - 15 &&
+							y > screenHeight - endTurnBounds.height() - 15 &&
+							y < screenHeight - 15) {
+						if (isValidMove()) {
+							Log.i(TAG, "End turn with valid move");
+						} else {
+							Log.i(TAG, "End turn with invalid move");
+						}
+					}
 				}
 			}
 			break;
 		
 		case MotionEvent.ACTION_UP:
 			if (movingCardIdx >= 0 &&
-					y < screenHeight * 3 / 4) {
+					y < ((screenHeight * 3 / 4) - (scaledCardH / 2)) + scaledCardH) {
 				choosenCards.add(hand.get(movingCardIdx));
 				hand.remove(movingCardIdx);
 			}
@@ -218,6 +235,45 @@ public class GameView extends View {
 		Collections.shuffle(deck, new Random());
 		for (int i = 0; i < initCardsNumber; i++) {
 			drawCard(hand);
+		}
+	}
+	
+	private boolean isValidMove() {
+		ArrayList<Card> tempCards = new ArrayList<Card>();
+		ArrayList<Card> wellPlayed = new ArrayList<Card>();
+		
+		if (! cardDrawn.isEmpty()) {
+			for (Card card : choosenCards) {
+				tempCards.add(card);
+			}
+			tempCards.add(cardDrawn.get(0));
+			
+			Collections.sort(tempCards);
+			int sequence = 1;
+			for (int i = 0; i < tempCards.size() - 1; i++) {
+				if (tempCards.get(i).getSuit() == tempCards.get(i + 1).getSuit() &&
+						tempCards.get(i).getRank() + 1 == tempCards.get(i + 1).getRank()) {
+					sequence += 1;
+				} else if (sequence >= 3) {
+					for (int j = i - 1; j <= i - sequence; j--) {
+						wellPlayed.add(tempCards.get(j));
+					}
+				}
+			}
+			
+			Log.i(TAG, "Well played cards: " + wellPlayed.toString());
+			Log.i(TAG, "tempCards: " + tempCards.toString());
+			
+			if (tempCards.size() == wellPlayed.size()) {
+				Toast.makeText(mContext, "Valid move", Toast.LENGTH_LONG).show();
+				return true;
+			} else {
+				Toast.makeText(mContext, "Invalid move", Toast.LENGTH_LONG).show();
+				return false;
+			}
+		} else {
+			Toast.makeText(mContext, mContext.getString(R.string.error_no_drawn_card), Toast.LENGTH_LONG).show();
+			return false;
 		}
 	}
 

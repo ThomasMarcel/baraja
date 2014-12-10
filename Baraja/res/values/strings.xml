@@ -9,5 +9,6 @@
     <string name="play">Play</string>
     <string name="credits">Credits</string>
     <string name="end_turn">End turn</string>
+    <string name="error_no_drawn_card">You must draw a card first</string>
 
 </resources>
