@@ -41,7 +41,12 @@ public class GameView extends View {
 	private Bitmap cardBack;
 	
 	private boolean mTurn;
+	
+	// Card drawn by player at each turn
 	private ArrayList<Card> cardDrawn = new ArrayList<Card>();
+	
+	// Cards the player wants to play
+	private ArrayList<Card> choosenCards = new ArrayList<Card>();
 
 	public GameView(Context context) {
 		super(context);
@@ -96,9 +101,18 @@ public class GameView extends View {
 					((screenHeight / 4) - (scaledCardH / 2)), mPaint);
 		}
 		
+		// Draw the card the player has to draw from the pickup pile at each turn
 		if (! cardDrawn.isEmpty()) {
 			canvas.drawBitmap(cardDrawn.get(0).getBitmap(), (screenWidth / 2) + 5,
 					((screenHeight / 4) - (scaledCardH / 2)), mPaint);
+		}
+		
+		// Draw the cards the player is choosing to play
+		if (! choosenCards.isEmpty()) {
+			for (int i = 0; i < choosenCards.size(); i++) {
+				canvas.drawBitmap(choosenCards.get(i).getBitmap(), (float) (i * (scaledCardW + 5)),
+						((screenHeight * 3 / 4) - (scaledCardH / 2)), mPaint);
+			}
 		}
 		
 		// Draw the player's hand
@@ -134,11 +148,24 @@ public class GameView extends View {
 				}
 				
 				if (movingCardIdx < 0) {
-					if (x > (screenWidth / 2) - scaledCardW - 5 &&
+					if (cardDrawn.isEmpty() &&
+							x > (screenWidth / 2) - scaledCardW - 5 &&
 							x < (screenWidth / 2) - 5 &&
 							y > ((screenHeight / 4) - (scaledCardH / 2)) &&
 							y < ((screenHeight / 4) + (scaledCardH / 2))) {
 						drawCard(cardDrawn);
+					}
+					
+					if (! choosenCards.isEmpty()) {
+						for (int i = 0; i < choosenCards.size(); i++) {
+							if (x > i * (scaledCardW + 5) &&
+									x < (i * (scaledCardW + 5)) + scaledCardW &&
+									y > ((screenHeight * 3 / 4) - (scaledCardH / 2)) &&
+									y < ((screenHeight * 3 / 4) - (scaledCardH / 2)) + scaledCardH) {
+								hand.add(choosenCards.get(i));
+								choosenCards.remove(i);
+							}
+						}
 					}
 				}
 			}
@@ -147,6 +174,7 @@ public class GameView extends View {
 		case MotionEvent.ACTION_UP:
 			if (movingCardIdx >= 0 &&
 					y < screenHeight * 3 / 4) {
+				choosenCards.add(hand.get(movingCardIdx));
 				hand.remove(movingCardIdx);
 			}
 			movingCardIdx = -1;
