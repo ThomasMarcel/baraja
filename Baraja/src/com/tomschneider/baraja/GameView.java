@@ -30,6 +30,7 @@ public class GameView extends View {
 	private ArrayList<Card> hand = new ArrayList<Card>();
 	
 	private int initCardsNumber;
+	private static final int MIN_SEQUENCE = 2;
 	
 	private int movingCardIdx = -1;
 	private int movingX;
@@ -250,15 +251,27 @@ public class GameView extends View {
 			
 			Collections.sort(tempCards);
 			int sequence = 1;
-			for (int i = 0; i < tempCards.size() - 1; i++) {
-				if (tempCards.get(i).getSuit() == tempCards.get(i + 1).getSuit() &&
-						tempCards.get(i).getRank() + 1 == tempCards.get(i + 1).getRank()) {
+			for (int i = 1; i < tempCards.size(); i++) {
+				if (tempCards.get(i).getSuit() == tempCards.get(i - 1).getSuit() &&
+						tempCards.get(i).getRank() == tempCards.get(i - 1).getRank() + 1) {
 					sequence += 1;
-				} else if (sequence >= 3) {
-					for (int j = i - 1; j <= i - sequence; j--) {
-						wellPlayed.add(tempCards.get(j));
+				}
+				
+				Log.i(TAG, "Sequence: " + sequence);
+				
+				if (sequence >= MIN_SEQUENCE) {
+					Log.i(TAG, "Adding well played cards");
+					if (! wellPlayed.contains(tempCards.get(i - 1))) {
+						wellPlayed.add(tempCards.get(i - 1));
+					}
+					if (! wellPlayed.contains(tempCards.get(i))) {
+						wellPlayed.add(tempCards.get(i));
 					}
 				}
+			}
+			
+			if (! wellPlayed.contains(cardDrawn.get(0))) {
+				wellPlayed.add(cardDrawn.get(0));
 			}
 			
 			Log.i(TAG, "Well played cards: " + wellPlayed.toString());
