@@ -261,11 +261,10 @@ public class GameView extends View {
 				
 				if (sequence >= MIN_SEQUENCE) {
 					Log.i(TAG, "Adding well played cards");
-					if (! wellPlayed.contains(tempCards.get(i - 1))) {
-						wellPlayed.add(tempCards.get(i - 1));
-					}
-					if (! wellPlayed.contains(tempCards.get(i))) {
-						wellPlayed.add(tempCards.get(i));
+					for (int j = i; j > i - sequence; j--) {
+						if (! wellPlayed.contains(tempCards.get(i))) {
+							wellPlayed.add(tempCards.get(i));
+						}
 					}
 				}
 			}
