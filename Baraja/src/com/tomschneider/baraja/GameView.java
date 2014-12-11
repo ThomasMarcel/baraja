@@ -244,44 +244,49 @@ public class GameView extends View {
 		ArrayList<Card> wellPlayed = new ArrayList<Card>();
 		
 		if (! cardDrawn.isEmpty()) {
-			for (Card card : choosenCards) {
-				tempCards.add(card);
-			}
-			tempCards.add(cardDrawn.get(0));
-			
-			Collections.sort(tempCards);
-			int sequence = 1;
-			for (int i = 1; i < tempCards.size(); i++) {
-				if (tempCards.get(i).getSuit() == tempCards.get(i - 1).getSuit() &&
-						tempCards.get(i).getRank() == tempCards.get(i - 1).getRank() + 1) {
-					sequence += 1;
+			if (! choosenCards.isEmpty()) {
+				for (Card card : choosenCards) {
+					tempCards.add(card);
 				}
+				tempCards.add(cardDrawn.get(0));
+			
+				Collections.sort(tempCards);
+				int sequence = 1;
+				for (int i = 1; i < tempCards.size(); i++) {
+					if (tempCards.get(i).getSuit() == tempCards.get(i - 1).getSuit() &&
+							tempCards.get(i).getRank() == tempCards.get(i - 1).getRank() + 1) {
+						sequence += 1;
+					}
 				
-				Log.i(TAG, "Sequence: " + sequence);
+					Log.i(TAG, "Sequence: " + sequence);
 				
-				if (sequence >= MIN_SEQUENCE) {
-					Log.i(TAG, "Adding well played cards");
-					for (int j = i; j > i - sequence; j--) {
-						if (! wellPlayed.contains(tempCards.get(j))) {
-							wellPlayed.add(tempCards.get(j));
+					if (sequence >= MIN_SEQUENCE) {
+						Log.i(TAG, "Adding well played cards");
+						for (int j = i; j > i - sequence; j--) {
+							if (! wellPlayed.contains(tempCards.get(j))) {
+								wellPlayed.add(tempCards.get(j));
+							}
 						}
 					}
 				}
-			}
 			
-			if (! wellPlayed.contains(cardDrawn.get(0))) {
-				wellPlayed.add(cardDrawn.get(0));
-			}
+				if (! wellPlayed.contains(cardDrawn.get(0))) {
+					wellPlayed.add(cardDrawn.get(0));
+				}
 			
-			Log.i(TAG, "Well played cards: " + wellPlayed.toString());
-			Log.i(TAG, "tempCards: " + tempCards.toString());
+				Log.i(TAG, "Well played cards: " + wellPlayed.toString());
+				Log.i(TAG, "tempCards: " + tempCards.toString());
 			
-			if (tempCards.size() == wellPlayed.size()) {
-				Toast.makeText(mContext, "Valid move", Toast.LENGTH_LONG).show();
-				return true;
+				if (tempCards.size() == wellPlayed.size()) {
+					Toast.makeText(mContext, "Valid move", Toast.LENGTH_LONG).show();
+					return true;
+				} else {
+					Toast.makeText(mContext, "Invalid move", Toast.LENGTH_LONG).show();
+					return false;
+				}
 			} else {
-				Toast.makeText(mContext, "Invalid move", Toast.LENGTH_LONG).show();
-				return false;
+				Log.i(TAG, "Passing turn");
+				return true;
 			}
 		} else {
 			Toast.makeText(mContext, mContext.getString(R.string.error_no_drawn_card), Toast.LENGTH_LONG).show();
