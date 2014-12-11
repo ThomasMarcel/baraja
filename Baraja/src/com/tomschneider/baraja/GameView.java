@@ -46,6 +46,7 @@ public class GameView extends View {
 	private Bitmap cardBack;
 	
 	private boolean mTurn;
+	private int mTurnNumber = 1;
 	
 	// Card drawn by player at each turn
 	private ArrayList<Card> cardDrawn = new ArrayList<Card>();
@@ -181,8 +182,12 @@ public class GameView extends View {
 							y < screenHeight - 15) {
 						if (isValidMove()) {
 							Log.i(TAG, "End turn with valid move");
+							for (int i = 0; i < choosenCards.size(); i++) {
+								cardsPlayed.add(choosenCards.get(i));
+							}
+							endTurn();
 						} else {
-							Log.i(TAG, "End turn with invalid move");
+							Log.i(TAG, "Invalid move, not ending turn");
 						}
 					}
 				}
@@ -269,15 +274,37 @@ public class GameView extends View {
 						}
 					}
 				}
-			
-				if (! wellPlayed.contains(cardDrawn.get(0))) {
-					wellPlayed.add(cardDrawn.get(0));
+				
+				Log.i(TAG, "Checking for same rank different suit");
+				for (int i = 0; i < choosenCards.size(); i++) {
+					sequence = 1;
+					for (int j = 0; j < tempCards.size(); j++) {
+						if (choosenCards.get(i).getRank() == tempCards.get(j).getRank() &&
+								choosenCards.get(i).getSuit() != tempCards.get(j).getSuit()) {
+							sequence += 1;
+							Log.i(TAG, "Found a possible match " + choosenCards.get(i).getId() + " - " + tempCards.get(j).getId());
+						}
+						
+						
+						if (sequence >= MIN_SEQUENCE) {
+							if (! wellPlayed.contains(choosenCards.get(i))) {
+								wellPlayed.add(choosenCards.get(i));
+							}
+						}
+					}
 				}
 			
 				Log.i(TAG, "Well played cards: " + wellPlayed.toString());
 				Log.i(TAG, "tempCards: " + tempCards.toString());
 			
-				if (tempCards.size() == wellPlayed.size()) {
+				boolean validMove = true;
+				for (Card card : choosenCards) {
+					if (! wellPlayed.contains(card)) {
+						validMove = false;
+					}
+				}
+				
+				if (validMove) {
 					Toast.makeText(mContext, "Valid move", Toast.LENGTH_LONG).show();
 					return true;
 				} else {
@@ -294,4 +321,8 @@ public class GameView extends View {
 		}
 	}
 
+	private void endTurn() {
+		//mTurn = false;
+		mTurnNumber += 1;
+	}
 }
