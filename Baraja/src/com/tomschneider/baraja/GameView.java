@@ -123,6 +123,8 @@ public class GameView extends View {
 			}
 		}
 		
+		// Draw the cards already played
+		
 		// Draw the player's hand
 		for (int i = 0; i < hand.size(); i++) {
 			canvas.drawBitmap(hand.get(i).getBitmap(), (float) (i * (scaledCardW + 5)), (float) ((screenHeight - scaledCardH - (endTurnBounds.height() * 2))), mPaint);
