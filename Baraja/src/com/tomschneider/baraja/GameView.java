@@ -124,6 +124,12 @@ public class GameView extends View {
 		}
 		
 		// Draw the cards already played
+		if (! cardsPlayed.isEmpty()) {
+			for (int i = 0; i < cardsPlayed.size(); i++) {
+				canvas.drawBitmap(cardsPlayed.get(i).getBitmap(), (float) (i * (scaledCardW + 5)),
+						((screenHeight / 2) - (scaledCardH / 2)), mPaint);
+			}
+		}
 		
 		// Draw the player's hand
 		for (int i = 0; i < hand.size(); i++) {
@@ -187,6 +193,10 @@ public class GameView extends View {
 							for (int i = 0; i < choosenCards.size(); i++) {
 								cardsPlayed.add(choosenCards.get(i));
 							}
+							cardsPlayed.add(cardDrawn.get(0));
+							Collections.sort(cardsPlayed);
+							cardDrawn.clear();
+							choosenCards.clear();
 							endTurn();
 						} else {
 							Log.i(TAG, "Invalid move, not ending turn");
