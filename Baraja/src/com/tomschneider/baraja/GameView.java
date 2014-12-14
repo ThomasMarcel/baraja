@@ -266,6 +266,11 @@ public class GameView extends View {
 					tempCards.add(card);
 				}
 				tempCards.add(cardDrawn.get(0));
+				if (! cardsPlayed.isEmpty()) {
+					for (Card card : cardsPlayed) {
+						tempCards.add(card);
+					}
+				}
 			
 				Collections.sort(tempCards);
 				int sequence = 1;
