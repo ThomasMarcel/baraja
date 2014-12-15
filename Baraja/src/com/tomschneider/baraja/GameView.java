@@ -115,21 +115,13 @@ public class GameView extends View {
 					((screenHeight / 4) - (scaledCardH / 2)), mPaint);
 		}
 		
-		// Draw the cards the player is choosing to play
-		if (! choosenCards.isEmpty()) {
-			for (int i = 0; i < choosenCards.size(); i++) {
-				canvas.drawBitmap(choosenCards.get(i).getBitmap(), (float) (i * (scaledCardW + 5)),
-						((screenHeight * 3 / 4) - (scaledCardH / 2)), mPaint);
-			}
-		}
-		
 		// Draw the cards already played
 		if (! cardsPlayed.isEmpty()) {
 			float cardsPlayedTop = (screenHeight / 2) - (scaledCardH / 2);
 			float cardsPlayedLeft = 0;
 			int row = 1;
 			int cardsInRow = 0;
-			Log.i(TAG, "Displaying cards played");
+			//Log.i(TAG, "Displaying cards played");
 			for (int i = 0; i < cardsPlayed.size(); i++) {
 				if (row == 1) {
 					cardsPlayedLeft = i * (scaledCardW + 5);
@@ -143,11 +135,19 @@ public class GameView extends View {
 					cardsPlayedTop += scaledCardH;
 					row += 1;
 					cardsPlayedLeft = (i - (cardsInRow * (row - 1))) * (scaledCardW + 5);
-					Log.i(TAG, "Displaying cards played on row " + row + ". Cards per row: " + cardsInRow);
+					//Log.i(TAG, "Displaying cards played on row " + row + ". Cards per row: " + cardsInRow);
 				}
 				canvas.drawBitmap(cardsPlayed.get(i).getBitmap(), cardsPlayedLeft,
 						cardsPlayedTop, mPaint);
-				Log.i(TAG, "i: " + i + ", cardsPlayed.size: " + cardsPlayed.size());
+				//Log.i(TAG, "i: " + i + ", cardsPlayed.size: " + cardsPlayed.size());
+			}
+		}
+		
+		// Draw the cards the player is choosing to play
+		if (! choosenCards.isEmpty()) {
+			for (int i = 0; i < choosenCards.size(); i++) {
+				canvas.drawBitmap(choosenCards.get(i).getBitmap(), (float) (i * (scaledCardW + 5)),
+						((screenHeight * 3 / 4) - (scaledCardH / 2)), mPaint);
 			}
 		}
 		
@@ -298,34 +298,41 @@ public class GameView extends View {
 					if (tempCards.get(i).getSuit() == tempCards.get(i - 1).getSuit() &&
 							tempCards.get(i).getRank() == tempCards.get(i - 1).getRank() + 1) {
 						sequence += 1;
+						Log.i(TAG, "Sequence between i-i (" + tempCards.get(i - 1).getId() + ") and i (" + tempCards.get(i).getId() + ")");
+					} else {
+						sequence = 1;
 					}
 				
 					Log.i(TAG, "Sequence: " + sequence);
 				
 					if (sequence >= MIN_SEQUENCE) {
-						Log.i(TAG, "Adding well played cards");
+						//Log.i(TAG, "Adding well played cards");
 						for (int j = i; j > i - sequence; j--) {
 							if (! wellPlayed.contains(tempCards.get(j))) {
 								wellPlayed.add(tempCards.get(j));
+								Log.i(TAG, "Sequence match, adding " + tempCards.get(j).getId());
 							}
 						}
 					}
 				}
 				
-				Log.i(TAG, "Checking for same rank different suit");
+				//Log.i(TAG, "Checking for same rank different suit");
 				for (int i = 0; i < choosenCards.size(); i++) {
 					sequence = 1;
 					for (int j = 0; j < tempCards.size(); j++) {
 						if (choosenCards.get(i).getRank() == tempCards.get(j).getRank() &&
 								choosenCards.get(i).getSuit() != tempCards.get(j).getSuit()) {
 							sequence += 1;
-							Log.i(TAG, "Found a possible match " + choosenCards.get(i).getId() + " - " + tempCards.get(j).getId());
+							//Log.i(TAG, "Found a possible match " + choosenCards.get(i).getId() + " - " + tempCards.get(j).getId());
+						} else {
+							sequence = 1;
 						}
 						
 						
 						if (sequence >= MIN_SEQUENCE) {
 							if (! wellPlayed.contains(choosenCards.get(i))) {
 								wellPlayed.add(choosenCards.get(i));
+								Log.i(TAG, "Same rank match, adding " + choosenCards.get(i).getId());
 							}
 						}
 					}
