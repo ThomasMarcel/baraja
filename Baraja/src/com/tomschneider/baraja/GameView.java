@@ -125,9 +125,29 @@ public class GameView extends View {
 		
 		// Draw the cards already played
 		if (! cardsPlayed.isEmpty()) {
+			float cardsPlayedTop = (screenHeight / 2) - (scaledCardH / 2);
+			float cardsPlayedLeft = 0;
+			int row = 1;
+			int cardsInRow = 0;
+			Log.i(TAG, "Displaying cards played");
 			for (int i = 0; i < cardsPlayed.size(); i++) {
-				canvas.drawBitmap(cardsPlayed.get(i).getBitmap(), (float) (i * (scaledCardW + 5)),
-						((screenHeight / 2) - (scaledCardH / 2)), mPaint);
+				if (row == 1) {
+					cardsPlayedLeft = i * (scaledCardW + 5);
+				} else {
+					cardsPlayedLeft = (i - (cardsInRow * (row - 1))) * (scaledCardW + 5);
+				}
+				if (cardsPlayedLeft + scaledCardW > screenWidth) {
+					if (cardsInRow == 0) {
+						cardsInRow = i;
+					}
+					cardsPlayedTop += scaledCardH;
+					row += 1;
+					cardsPlayedLeft = (i - (cardsInRow * (row - 1))) * (scaledCardW + 5);
+					Log.i(TAG, "Displaying cards played on row " + row + ". Cards per row: " + cardsInRow);
+				}
+				canvas.drawBitmap(cardsPlayed.get(i).getBitmap(), cardsPlayedLeft,
+						cardsPlayedTop, mPaint);
+				Log.i(TAG, "i: " + i + ", cardsPlayed.size: " + cardsPlayed.size());
 			}
 		}
 		
