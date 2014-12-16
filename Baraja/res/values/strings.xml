@@ -10,5 +10,10 @@
     <string name="credits">Credits</string>
     <string name="end_turn">End turn</string>
     <string name="error_no_drawn_card">You must draw a card first</string>
+    <string name="end_turn_confirmation">End current turn?</string>
+    <string name="dialog_decline">No</string>
+    <string name="dialog_accept">Yes</string>
+    <string name="dialog_ok">OK</string>
+    <string name="turn">Turn</string>
 
 </resources>

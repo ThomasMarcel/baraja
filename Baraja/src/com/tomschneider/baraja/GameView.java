@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -42,6 +43,7 @@ public class GameView extends View {
 	
 	private static String stringEndTurn;
 	private Rect endTurnBounds;
+	private static String stringTurn;
 	
 	private Bitmap cardBack;
 	
@@ -53,6 +55,8 @@ public class GameView extends View {
 	
 	// Cards the player wants to play
 	private ArrayList<Card> choosenCards = new ArrayList<Card>();
+	
+	ArrayList<GameNotificationListener> notificationListeners = new ArrayList<GameNotificationListener>();
 
 	public GameView(Context context) {
 		super(context);
@@ -61,6 +65,7 @@ public class GameView extends View {
 		mContext = context;
 		
 		stringEndTurn = mContext.getString(R.string.end_turn);
+		stringTurn = mContext.getString(R.string.turn);
 		
 		scale = mContext.getResources().getDisplayMetrics().density;
 		
@@ -99,6 +104,9 @@ public class GameView extends View {
 	protected void onDraw(Canvas canvas) {
 		canvas.drawColor(Color.DKGRAY);
 		mPaint = new Paint();
+		
+		// Draw the turn number
+		canvas.drawText(stringTurn + " " + mTurnNumber, 5.0f, 5.0f + endTurnBounds.height(), textPaint);
 		
 		// Draw the end turn button
 		canvas.drawText(stringEndTurn, screenWidth - endTurnBounds.width() - 15, screenHeight - 15, textPaint);
@@ -210,13 +218,6 @@ public class GameView extends View {
 							y < screenHeight - 15) {
 						if (isValidMove()) {
 							Log.i(TAG, "End turn with valid move");
-							for (int i = 0; i < choosenCards.size(); i++) {
-								cardsPlayed.add(choosenCards.get(i));
-							}
-							cardsPlayed.add(cardDrawn.get(0));
-							Collections.sort(cardsPlayed);
-							cardDrawn.clear();
-							choosenCards.clear();
 							endTurn();
 						} else {
 							Log.i(TAG, "Invalid move, not ending turn");
@@ -367,6 +368,34 @@ public class GameView extends View {
 
 	private void endTurn() {
 		//mTurn = false;
-		mTurnNumber += 1;
+		if (! hand.isEmpty()) {
+			for (GameNotificationListener listener : notificationListeners) {
+				listener.onEvent(GameNotificationListener.ENDTURN_DIALOG);
+			}
+		} else {
+			Log.i(TAG, "Yon win!");
+		}
+	}
+	
+	public void setGameNotificationListener(GameNotificationListener listener) {
+		Log.i(TAG, "GameView.setGameNotificationListener");
+		if (! notificationListeners.contains(listener)) {
+			notificationListeners.add(listener);
+		}
+	}
+	
+	public void setTurn(boolean turn) {
+		if (mTurn && ! turn) {
+			for (int i = 0; i < choosenCards.size(); i++) {
+				cardsPlayed.add(choosenCards.get(i));
+			}
+			cardsPlayed.add(cardDrawn.get(0));
+			Collections.sort(cardsPlayed);
+			cardDrawn.clear();
+			choosenCards.clear();
+			mTurn = turn;
+			mTurnNumber += 1;
+			invalidate();
+		}
 	}
 }
