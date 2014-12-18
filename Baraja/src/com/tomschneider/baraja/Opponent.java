@@ -40,19 +40,11 @@ public class Opponent {
 		return hand.get(id);
 	}
 	
-	public int makePlay(List<Card> playedCards, List<Card> drawnCard) {
-		int play = 0;
-		ArrayList<Card> tempCards = new ArrayList<Card>();
+	public ArrayList<Card> makePlay(ArrayList<Card> cardsPlayed, ArrayList<Card> cardDrawn) {
+		ArrayList<Card> choosenCards = new ArrayList<Card>();
 		
-		if (! playedCards.isEmpty()) {
-			for (Card card : playedCards) {
-				tempCards.add(card);
-			}
-		}
-		if (! drawnCard.isEmpty()) {
-			tempCards.add(drawnCard.get(0));
-		}
+		GameView.isValidMove(hand, cardDrawn, cardsPlayed, true, choosenCards);
 		
-		return play;
+		return choosenCards;
 	}
 }

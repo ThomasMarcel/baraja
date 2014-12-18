@@ -19,7 +19,7 @@ import android.view.View;
 import android.widget.Toast;
 
 public class GameView extends View {
-	private Context mContext;
+	private static Context mContext;
 	
 	private static final String TAG = "Baraja";
 	
@@ -221,7 +221,7 @@ public class GameView extends View {
 							x < screenWidth - 15 &&
 							y > screenHeight - endTurnBounds.height() - 15 &&
 							y < screenHeight - 15) {
-						if (isValidMove(choosenCards, cardDrawn, cardsPlayed)) {
+						if (isValidMove(choosenCards, cardDrawn, cardsPlayed, false, null)) {
 							Log.i(TAG, "End turn with valid move");
 							endTurn();
 						} else {
@@ -282,7 +282,7 @@ public class GameView extends View {
 		}
 	}
 	
-	private boolean isValidMove(ArrayList<Card> choosenCards, ArrayList<Card> cardDrawn, ArrayList<Card> cardsPlayed) {
+	public static boolean isValidMove(ArrayList<Card> choosenCards, ArrayList<Card> cardDrawn, ArrayList<Card> cardsPlayed, boolean automation, ArrayList<Card> cardsToPlay) {
 		ArrayList<Card> tempCards = new ArrayList<Card>();
 		ArrayList<Card> wellPlayed = new ArrayList<Card>();
 		
