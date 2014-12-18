@@ -280,6 +280,13 @@ public class GameView extends View {
 		for (int i = 0; i < initCardsNumber; i++) {
 			drawCard(hand);
 		}
+
+		for (int i = 0; i < NUMBER_OF_OPPONENTS; i++) {
+			opponents[i] = new Opponent(mContext);
+			for (int j = 0; j < initCardsNumber; j++) {
+				drawCard(opponents[i].hand);
+			}
+		}
 	}
 	
 	public static boolean isValidMove(ArrayList<Card> choosenCards, ArrayList<Card> cardDrawn, ArrayList<Card> cardsPlayed, boolean automation, ArrayList<Card> cardsToPlay) {
@@ -349,12 +356,15 @@ public class GameView extends View {
 			
 				boolean validMove = true;
 				for (Card card : choosenCards) {
-					if (! wellPlayed.contains(card)) {
+					if (! automation && ! wellPlayed.contains(card)) {
 						validMove = false;
 					}
 				}
 				
 				if (validMove) {
+					if (automation) {
+						cardsToPlay = wellPlayed;
+					}
 					Toast.makeText(mContext, "Valid move", Toast.LENGTH_LONG).show();
 					return true;
 				} else {
@@ -374,8 +384,14 @@ public class GameView extends View {
 	private void endTurn() {
 		//mTurn = false;
 		if (! hand.isEmpty()) {
-			for (GameNotificationListener listener : notificationListeners) {
-				listener.onEvent(GameNotificationListener.ENDTURN_DIALOG);
+			if (mTurn) {
+				for (GameNotificationListener listener : notificationListeners) {
+					listener.onEvent(GameNotificationListener.ENDTURN_DIALOG);
+				}
+			} else {
+				for (GameNotificationListener listener : notificationListeners) {
+					listener.onEvent(GameNotificationListener.ENDTURN);
+				}
 			}
 		} else {
 			Log.i(TAG, "Yon win!");
@@ -398,9 +414,10 @@ public class GameView extends View {
 			Collections.sort(cardsPlayed);
 			cardDrawn.clear();
 			choosenCards.clear();
-			mTurn = turn;
+		} else {
 			mTurnNumber += 1;
-			invalidate();
 		}
+		mTurn = turn;
+		invalidate();
 	}
 }

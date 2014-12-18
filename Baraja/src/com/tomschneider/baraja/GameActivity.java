@@ -43,7 +43,7 @@ public class GameActivity extends Activity implements GameNotificationListener {
 			mEndTurn.show(getFragmentManager(), TAG);
 			break;
 		case GameNotificationListener.ENDTURN:
-			gameView.setTurn(false);
+			gameView.setTurn(true);
 		}
 	}
 }
