@@ -113,6 +113,15 @@ public class GameView extends View {
 		// Draw the turn number
 		canvas.drawText(stringTurn + " " + mTurnNumber, 5.0f, 5.0f + endTurnBounds.height(), textPaint);
 		
+		for (int i = 0; i < opponents.length; i++) {
+			int cardX = (screenWidth / (opponents.length + 1));
+			int cardY = 5 + endTurnBounds.height();
+			for (int j = 0; j < opponents[i].getHand().size(); j++) {
+				canvas.drawBitmap(opponents[i].getHand().get(j).getBitmap(), (float) (cardX + (j * 15)),  (float) cardY, mPaint);
+			}
+			//Log.i(TAG, "Cards in opponent's hand (" + opponents[i].getHand().size() + "): " + opponents[i].getHand());
+		}
+		
 		// Draw the end turn button
 		canvas.drawText(stringEndTurn, screenWidth - endTurnBounds.width() - 15, screenHeight - 15, textPaint);
 		
@@ -175,6 +184,13 @@ public class GameView extends View {
 		}
 		
 		invalidate();
+		
+		if (! mTurn) {
+			if (cardDrawn.isEmpty()) {
+				drawCard(cardDrawn);
+			}
+			endTurn();
+		}
 	}
 	
 	@Override
@@ -383,6 +399,7 @@ public class GameView extends View {
 
 	private void endTurn() {
 		//mTurn = false;
+		Log.i(TAG, "GameView.endTurn mTurn: " + mTurn);
 		if (! hand.isEmpty()) {
 			if (mTurn) {
 				for (GameNotificationListener listener : notificationListeners) {
@@ -414,10 +431,15 @@ public class GameView extends View {
 			Collections.sort(cardsPlayed);
 			cardDrawn.clear();
 			choosenCards.clear();
+			mTurn = false;
 		} else {
+			Log.i(TAG, "Opponents playing");
+			for (Opponent opponent : opponents) {
+				opponent.makePlay(cardsPlayed, cardDrawn);
+			}
 			mTurnNumber += 1;
+			mTurn = true;
 		}
-		mTurn = turn;
 		invalidate();
 	}
 }
