@@ -57,6 +57,9 @@ public class GameView extends View {
 	private ArrayList<Card> choosenCards = new ArrayList<Card>();
 	
 	ArrayList<GameNotificationListener> notificationListeners = new ArrayList<GameNotificationListener>();
+	
+	private static final int NUMBER_OF_OPPONENTS = 1;
+	private Opponent[] opponents;
 
 	public GameView(Context context) {
 		super(context);
@@ -79,6 +82,8 @@ public class GameView extends View {
 		textPaint.setColor(Color.WHITE);
 		endTurnBounds = new Rect();
 		textPaint.getTextBounds(stringEndTurn, 0, stringEndTurn.length(), endTurnBounds);
+		
+		opponents = new Opponent[NUMBER_OF_OPPONENTS];
 		
 		//mTurn = new Random().nextBoolean();
 		mTurn = true;
@@ -216,7 +221,7 @@ public class GameView extends View {
 							x < screenWidth - 15 &&
 							y > screenHeight - endTurnBounds.height() - 15 &&
 							y < screenHeight - 15) {
-						if (isValidMove()) {
+						if (isValidMove(choosenCards, cardDrawn, cardsPlayed)) {
 							Log.i(TAG, "End turn with valid move");
 							endTurn();
 						} else {
@@ -277,7 +282,7 @@ public class GameView extends View {
 		}
 	}
 	
-	private boolean isValidMove() {
+	private boolean isValidMove(ArrayList<Card> choosenCards, ArrayList<Card> cardDrawn, ArrayList<Card> cardsPlayed) {
 		ArrayList<Card> tempCards = new ArrayList<Card>();
 		ArrayList<Card> wellPlayed = new ArrayList<Card>();
 		

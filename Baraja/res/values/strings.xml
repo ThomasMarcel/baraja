@@ -15,5 +15,17 @@
     <string name="dialog_accept">Yes</string>
     <string name="dialog_ok">OK</string>
     <string name="turn">Turn</string>
+    
+    <string name="name0">Nathan</string>
+ 	<string name="name1">Sol</string>
+ 	<string name="name2">Thomas</string>
+ 	<string name="name3">Ixchel</string>
+ 	<string name="name4">Flor</string>
+ 	<string name="name5">Arthur</string>
+ 	<string name="name6">Bub</string>
+ 	<string name="name7">Logan</string>
+ 	<string name="name8">Scott</string>
+ 	<string name="name9">Ororo</string>
+ 	<string name="name10">Remy</string>
 
 </resources>
