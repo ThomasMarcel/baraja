@@ -419,13 +419,13 @@ public class GameView extends View {
 				if (automation) {
 					Log.i(TAG, "AI well played cards: " + wellPlayed);
 				}
-				Toast.makeText(mContext, "Valid move", Toast.LENGTH_LONG).show();
+				//Toast.makeText(mContext, "Valid move", Toast.LENGTH_LONG).show();
 				//return mChoosenCards;
 				return wellPlayed;
 			} else {
 				wellPlayed.clear();
 				wellPlayed.add(new Card(-1));
-				Toast.makeText(mContext, "Invalid move", Toast.LENGTH_LONG).show();
+				//Toast.makeText(mContext, "Invalid move", Toast.LENGTH_LONG).show();
 				return wellPlayed;
 			}
 		} else {
@@ -447,6 +447,7 @@ public class GameView extends View {
 				}
 			}
 		} else {
+			Toast.makeText(mContext, "You win!", Toast.LENGTH_LONG).show();
 			Log.i(TAG, "Yon win!");
 		}
 	}
