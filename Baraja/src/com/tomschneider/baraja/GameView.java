@@ -31,7 +31,7 @@ public class GameView extends View {
 	private ArrayList<Card> hand = new ArrayList<Card>();
 	
 	private int initCardsNumber;
-	private static final int MIN_SEQUENCE = 2;
+	private static final int MIN_SEQUENCE = 3;
 	
 	private int movingCardIdx = -1;
 	private int movingX;
@@ -113,11 +113,13 @@ public class GameView extends View {
 		// Draw the turn number
 		canvas.drawText(stringTurn + " " + mTurnNumber, 5.0f, 5.0f + endTurnBounds.height(), textPaint);
 		
+		// Draw the opponent's hands
 		for (int i = 0; i < opponents.length; i++) {
-			int cardX = (screenWidth / (opponents.length + 1));
+			//int cardX = (screenWidth / (opponents.length + 1));
 			int cardY = 5 + endTurnBounds.height();
 			for (int j = 0; j < opponents[i].getHand().size(); j++) {
-				canvas.drawBitmap(opponents[i].getHand().get(j).getBitmap(), (float) (cardX + (j * 15)),  (float) cardY, mPaint);
+				int cardX = (screenWidth - ((scaledCardW + (opponents[i].getHand().size() * 15)))) / (opponents.length + 1);
+				canvas.drawBitmap(cardBack, (float) (cardX + (j * 15)),  (float) cardY, mPaint);
 			}
 			//Log.i(TAG, "Cards in opponent's hand (" + opponents[i].getHand().size() + "): " + opponents[i].getHand());
 		}
@@ -320,12 +322,14 @@ public class GameView extends View {
 				if (! mCardsPlayed.isEmpty()) {
 					for (Card card : mCardsPlayed) {
 						tempCards.add(card);
+						wellPlayed.add(card);
 					}
 				}
 			
 				Collections.sort(tempCards);
 				int sequence = 1;
 				for (int i = 1; i < tempCards.size(); i++) {
+					
 					if (tempCards.get(i).getSuit() == tempCards.get(i - 1).getSuit() &&
 							tempCards.get(i).getRank() == tempCards.get(i - 1).getRank() + 1) {
 						sequence += 1;
@@ -338,43 +342,57 @@ public class GameView extends View {
 				
 					if (sequence >= MIN_SEQUENCE) {
 						//Log.i(TAG, "Adding well played cards");
+						ArrayList<Card> cardSequence = new ArrayList<Card>();
 						for (int j = i; j > i - sequence; j--) {
 							if (! wellPlayed.contains(tempCards.get(j))) {
 								wellPlayed.add(tempCards.get(j));
+								cardSequence.add(tempCards.get(j));
 								//Log.i(TAG, "Sequence match, adding " + tempCards.get(j).getId());
 							}
 						}
+						Log.i(TAG, "Adding card sequence " + cardSequence + " to well played");
 					}
 				}
 				
 				//Log.i(TAG, "Checking for same rank different suit");
 				for (int i = 0; i < mChoosenCards.size(); i++) {
 					sequence = 1;
+					ArrayList<Card> cardSequence = new ArrayList<Card>();
 					for (int j = 0; j < tempCards.size(); j++) {
 						if (mChoosenCards.get(i).getRank() == tempCards.get(j).getRank() &&
 								mChoosenCards.get(i).getSuit() != tempCards.get(j).getSuit()) {
 							sequence += 1;
+							cardSequence.add(tempCards.get(j));
 							//Log.i(TAG, "Found a possible match " + choosenCards.get(i).getId() + " - " + tempCards.get(j).getId());
 						} else {
+							cardSequence.clear();
+							cardSequence.add(tempCards.get(i));
 							sequence = 1;
 						}
 						
 						
 						if (sequence >= MIN_SEQUENCE) {
-							if (! wellPlayed.contains(mChoosenCards.get(i))) {
-								wellPlayed.add(mChoosenCards.get(i));
-								//Log.i(TAG, "Same rank match, adding " + mChoosenCards.get(i).getId());
+							for (Card card : cardSequence) {
+								if (! wellPlayed.contains(card)) {
+									wellPlayed.add(card);
+									//Log.i(TAG, "Same rank match, adding " + mChoosenCards.get(i).getId());
+								}
 							}
 						}
 					}
 				}
 			
-				//Log.i(TAG, "Well played cards: " + wellPlayed.toString());
 				//Log.i(TAG, "tempCards: " + tempCards.toString());
 			
+				if (! wellPlayed.contains(mCardDrawn.get(0))) {
+					wellPlayed.add(mCardDrawn.get(0));
+				}
+				
+				Log.i(TAG, "Well played cards: " + wellPlayed.toString());
 				boolean validMove = true;
 				for (Card card : mChoosenCards) {
 					if (! automation && ! wellPlayed.contains(card)) {
+						Log.i(TAG, "well played doesn't contain choosen card " + card + ". Wrong move.");
 						validMove = false;
 					}
 				}
