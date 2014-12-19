@@ -314,118 +314,118 @@ public class GameView extends View {
 		ArrayList<Card> wellPlayed = new ArrayList<Card>();
 		
 		if (! mCardDrawn.isEmpty()) {
+			
 			if (! mChoosenCards.isEmpty()) {
 				for (Card card : mChoosenCards) {
 					tempCards.add(card);
 				}
-				tempCards.add(mCardDrawn.get(0));
-				if (! mCardsPlayed.isEmpty()) {
-					for (Card card : mCardsPlayed) {
-						tempCards.add(card);
-						wellPlayed.add(card);
-					}
-				}
+			}
 			
-				Collections.sort(tempCards);
-				int sequence = 1;
-				for (int i = 1; i < tempCards.size(); i++) {
+			tempCards.add(mCardDrawn.get(0));
+			wellPlayed.add(mCardDrawn.get(0));
+			
+			if (! mCardsPlayed.isEmpty()) {
+				for (Card card : mCardsPlayed) {
+					tempCards.add(card);
+					wellPlayed.add(card);
+				}
+			}
+			
+			Collections.sort(tempCards);
+			int sequence = 1;
+			for (int i = 1; i < tempCards.size(); i++) {
 					
-					if (tempCards.get(i).getSuit() == tempCards.get(i - 1).getSuit() &&
-							tempCards.get(i).getRank() == tempCards.get(i - 1).getRank() + 1) {
-						sequence += 1;
-						//Log.i(TAG, "Sequence between i-i (" + tempCards.get(i - 1).getId() + ") and i (" + tempCards.get(i).getId() + ")");
-					} else {
-						sequence = 1;
-					}
-				
-					//Log.i(TAG, "Sequence: " + sequence);
-				
-					if (sequence >= MIN_SEQUENCE) {
-						//Log.i(TAG, "Adding well played cards");
-						ArrayList<Card> cardSequence = new ArrayList<Card>();
-						for (int j = i; j > i - sequence; j--) {
-							if (! wellPlayed.contains(tempCards.get(j))) {
-								wellPlayed.add(tempCards.get(j));
-								cardSequence.add(tempCards.get(j));
-								//Log.i(TAG, "Sequence match, adding " + tempCards.get(j).getId());
-							}
-						}
-						Log.i(TAG, "Adding card sequence " + cardSequence + " to well played");
-					}
-				}
-				
-				//Log.i(TAG, "Checking for same rank different suit");
-				for (int i = 0; i < mChoosenCards.size(); i++) {
-					sequence = 1;
-					ArrayList<Card> cardSequence = new ArrayList<Card>();
-					for (int j = 0; j < tempCards.size(); j++) {
-						if (mChoosenCards.get(i).getRank() == tempCards.get(j).getRank() &&
-								mChoosenCards.get(i).getSuit() != tempCards.get(j).getSuit()) {
-							sequence += 1;
-							cardSequence.add(tempCards.get(j));
-							//Log.i(TAG, "Found a possible match " + choosenCards.get(i).getId() + " - " + tempCards.get(j).getId());
-						} else {
-							cardSequence.clear();
-							cardSequence.add(tempCards.get(i));
-							sequence = 1;
-						}
-						
-						
-						if (sequence >= MIN_SEQUENCE) {
-							for (Card card : cardSequence) {
-								if (! wellPlayed.contains(card)) {
-									wellPlayed.add(card);
-									//Log.i(TAG, "Same rank match, adding " + mChoosenCards.get(i).getId());
-								}
-							}
-						}
-					}
-				}
-			
-				//Log.i(TAG, "tempCards: " + tempCards.toString());
-			
-				if (! wellPlayed.contains(mCardDrawn.get(0))) {
-					wellPlayed.add(mCardDrawn.get(0));
-				}
-				
-				Log.i(TAG, "Well played cards: " + wellPlayed.toString());
-				boolean validMove = true;
-				for (Card card : mChoosenCards) {
-					if (! automation && ! wellPlayed.contains(card)) {
-						Log.i(TAG, "well played doesn't contain choosen card " + card + ". Wrong move.");
-						validMove = false;
-					}
-				}
-				if (! mCardsPlayed.isEmpty()) {
-					for (int i = 0; i < mCardsPlayed.size(); i++) {
-						if (wellPlayed.contains(mCardsPlayed.get(i))) {
-							wellPlayed.remove(wellPlayed.indexOf(mCardsPlayed.get(i)));
-						}
-					}
-				}
-				if (! mCardDrawn.isEmpty()) {
-					if (wellPlayed.contains(mCardDrawn.get(0))) {
-						wellPlayed.remove(wellPlayed.indexOf(mCardDrawn.get(0)));
-					}
-				}
-				
-				if (validMove) {
-					//Log.i(TAG, "Valid move");
-					if (automation) {
-						Log.i(TAG, "AI well played cards: " + wellPlayed);
-					}
-					Toast.makeText(mContext, "Valid move", Toast.LENGTH_LONG).show();
-					//return mChoosenCards;
-					return wellPlayed;
+				if (tempCards.get(i).getSuit() == tempCards.get(i - 1).getSuit() &&
+						tempCards.get(i).getRank() == tempCards.get(i - 1).getRank() + 1) {
+					sequence += 1;
+					//Log.i(TAG, "Sequence between i-i (" + tempCards.get(i - 1).getId() + ") and i (" + tempCards.get(i).getId() + ")");
 				} else {
-					wellPlayed.clear();
-					wellPlayed.add(new Card(-1));
-					Toast.makeText(mContext, "Invalid move", Toast.LENGTH_LONG).show();
-					return wellPlayed;
+					sequence = 1;
 				}
-			} else {
-				Log.i(TAG, "Passing turn");
+				
+				//Log.i(TAG, "Sequence: " + sequence);
+				
+				if (sequence >= MIN_SEQUENCE) {
+					//Log.i(TAG, "Adding well played cards");
+					ArrayList<Card> cardSequence = new ArrayList<Card>();
+					for (int j = i; j > i - sequence; j--) {
+						if (! wellPlayed.contains(tempCards.get(j))) {
+							wellPlayed.add(tempCards.get(j));
+							cardSequence.add(tempCards.get(j));
+							//Log.i(TAG, "Sequence match, adding " + tempCards.get(j).getId());
+						}
+					}
+					Log.i(TAG, "Adding card sequence " + cardSequence + " to well played");
+				}
+			}
+				
+			//Log.i(TAG, "Checking for same rank different suit");
+			for (int i = 0; i < mChoosenCards.size(); i++) {
+				sequence = 1;
+				ArrayList<Card> cardSequence = new ArrayList<Card>();
+				cardSequence.add(mChoosenCards.get(i));
+				for (int j = 0; j < tempCards.size(); j++) {
+					if (mChoosenCards.get(i).getRank() == tempCards.get(j).getRank() &&
+							mChoosenCards.get(i).getSuit() != tempCards.get(j).getSuit()) {
+						sequence += 1;
+						cardSequence.add(tempCards.get(j));
+						//Log.i(TAG, "Found a possible match " + choosenCards.get(i).getId() + " - " + tempCards.get(j).getId());
+					}
+					
+					if (sequence >= MIN_SEQUENCE) {
+						Log.i(TAG, "Same rank sequence going on. Sequence: " + cardSequence);
+						for (Card card : cardSequence) {
+							if (! wellPlayed.contains(card)) {
+								wellPlayed.add(card);
+								//Log.i(TAG, "Same rank match, adding " + mChoosenCards.get(i).getId());
+							}
+						}
+					}
+				}
+				cardSequence.clear();
+				cardSequence.add(tempCards.get(i));
+				sequence = 1;
+			}
+			
+			//Log.i(TAG, "tempCards: " + tempCards.toString());
+			
+			if (! wellPlayed.contains(mCardDrawn.get(0))) {
+				wellPlayed.add(mCardDrawn.get(0));
+			}
+				
+			Log.i(TAG, "Well played cards: " + wellPlayed.toString());
+			boolean validMove = true;
+			for (Card card : mChoosenCards) {
+				if (! automation && ! wellPlayed.contains(card)) {
+					Log.i(TAG, "well played doesn't contain choosen card " + card + ". Wrong move.");
+					validMove = false;
+				}
+			}
+			if (! mCardsPlayed.isEmpty()) {
+				for (int i = 0; i < mCardsPlayed.size(); i++) {
+					if (wellPlayed.contains(mCardsPlayed.get(i))) {
+						wellPlayed.remove(wellPlayed.indexOf(mCardsPlayed.get(i)));
+					}
+				}
+			}
+			if (! mCardDrawn.isEmpty()) {
+				if (wellPlayed.contains(mCardDrawn.get(0))) {
+					wellPlayed.remove(wellPlayed.indexOf(mCardDrawn.get(0)));
+				}
+			}
+				
+			if (validMove) {
+				//Log.i(TAG, "Valid move");
+				if (automation) {
+					Log.i(TAG, "AI well played cards: " + wellPlayed);
+				}
+				Toast.makeText(mContext, "Valid move", Toast.LENGTH_LONG).show();
 				//return mChoosenCards;
+				return wellPlayed;
+			} else {
+				wellPlayed.clear();
+				wellPlayed.add(new Card(-1));
+				Toast.makeText(mContext, "Invalid move", Toast.LENGTH_LONG).show();
 				return wellPlayed;
 			}
 		} else {
