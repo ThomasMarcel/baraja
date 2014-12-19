@@ -186,9 +186,6 @@ public class GameView extends View {
 		invalidate();
 		
 		if (! mTurn) {
-			if (cardDrawn.isEmpty()) {
-				drawCard(cardDrawn);
-			}
 			endTurn();
 		}
 	}
@@ -237,12 +234,16 @@ public class GameView extends View {
 							x < screenWidth - 15 &&
 							y > screenHeight - endTurnBounds.height() - 15 &&
 							y < screenHeight - 15) {
-						ArrayList<Card> cardsToPlay = isValidMove(choosenCards, cardDrawn, cardsPlayed, false);
-						if (cardsToPlay.size() == 1 && cardsToPlay.get(0).getId() == -1) {
-							Log.i(TAG, "Invalid move, not ending turn");
+						if (! cardDrawn.isEmpty()) {
+							ArrayList<Card> cardsToPlay = isValidMove(choosenCards, cardDrawn, cardsPlayed, false);
+							if (cardsToPlay.size() == 1 && cardsToPlay.get(0).getId() == -1) {
+								Log.i(TAG, "Invalid move, not ending turn");
+							} else {
+								Log.i(TAG, "End turn with valid move");
+								endTurn();
+							}
 						} else {
-							Log.i(TAG, "End turn with valid move");
-							endTurn();
+							Toast.makeText(mContext, mContext.getString(R.string.error_no_drawn_card), Toast.LENGTH_LONG).show();
 						}
 					}
 				}
@@ -368,8 +369,8 @@ public class GameView extends View {
 					}
 				}
 			
-				Log.i(TAG, "Well played cards: " + wellPlayed.toString());
-				Log.i(TAG, "tempCards: " + tempCards.toString());
+				//Log.i(TAG, "Well played cards: " + wellPlayed.toString());
+				//Log.i(TAG, "tempCards: " + tempCards.toString());
 			
 				boolean validMove = true;
 				for (Card card : mChoosenCards) {
@@ -377,14 +378,27 @@ public class GameView extends View {
 						validMove = false;
 					}
 				}
+				if (! mCardsPlayed.isEmpty()) {
+					for (int i = 0; i < mCardsPlayed.size(); i++) {
+						if (wellPlayed.contains(mCardsPlayed.get(i))) {
+							wellPlayed.remove(wellPlayed.indexOf(mCardsPlayed.get(i)));
+						}
+					}
+				}
+				if (! mCardDrawn.isEmpty()) {
+					if (wellPlayed.contains(mCardDrawn.get(0))) {
+						wellPlayed.remove(wellPlayed.indexOf(mCardDrawn.get(0)));
+					}
+				}
 				
 				if (validMove) {
 					//Log.i(TAG, "Valid move");
 					if (automation) {
-						Log.i(TAG, "Well played cards: " + wellPlayed);
+						Log.i(TAG, "AI well played cards: " + wellPlayed);
 					}
 					Toast.makeText(mContext, "Valid move", Toast.LENGTH_LONG).show();
-					return mChoosenCards;
+					//return mChoosenCards;
+					return wellPlayed;
 				} else {
 					wellPlayed.clear();
 					wellPlayed.add(new Card(-1));
@@ -393,11 +407,11 @@ public class GameView extends View {
 				}
 			} else {
 				Log.i(TAG, "Passing turn");
-				return mChoosenCards;
+				//return mChoosenCards;
+				return wellPlayed;
 			}
 		} else {
-			Toast.makeText(mContext, mContext.getString(R.string.error_no_drawn_card), Toast.LENGTH_LONG).show();
-			return null;
+			return wellPlayed;
 		}
 	}
 
@@ -431,16 +445,33 @@ public class GameView extends View {
 			for (int i = 0; i < choosenCards.size(); i++) {
 				cardsPlayed.add(choosenCards.get(i));
 			}
-			cardsPlayed.add(cardDrawn.get(0));
+			//cardsPlayed.add(cardDrawn.get(0));
 			mTurn = false;
 		} else {
-			//Log.i(TAG, "Opponents playing");
+			Log.i(TAG, "Opponents playing");
+			Log.i(TAG, "Cards already played: " + cardsPlayed);
 			for (Opponent opponent : opponents) {
-				opponent.makePlay(cardsPlayed, cardDrawn);
+				Log.i(TAG, "Opponent " + opponent.getName() + " playing with hand " + opponent.getHand());
+				if (cardDrawn.isEmpty()) {
+					drawCard(cardDrawn);
+					Log.i(TAG, "Opponent " + opponent.getName() + " drawing card " + cardDrawn);
+				}
+				ArrayList<Card> opponentMove = opponent.makePlay(cardsPlayed, cardDrawn);
+				if (! opponentMove.isEmpty()) {
+					for (Card card : opponentMove) {
+						cardsPlayed.add(card);
+					}
+				}
+				for (int i = 0; i < cardsPlayed.size(); i++) {
+					if (opponent.getHand().contains(cardsPlayed.get(i))) {
+						opponent.mHand.remove(opponent.mHand.indexOf(cardsPlayed.get(i)));
+					}
+				}
 			}
 			mTurnNumber += 1;
 			mTurn = true;
 		}
+		cardsPlayed.add(cardDrawn.get(0));
 		Collections.sort(cardsPlayed);
 		cardDrawn.clear();
 		choosenCards.clear();

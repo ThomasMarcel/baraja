@@ -46,21 +46,6 @@ public class Opponent {
 	public ArrayList<Card> makePlay(ArrayList<Card> cardsPlayed, ArrayList<Card> cardDrawn) {
 		ArrayList<Card> choosenCards = GameView.isValidMove(mHand, cardDrawn, cardsPlayed, true);
 		
-		if (! choosenCards.isEmpty()) {
-			if (choosenCards.size() != 1 && choosenCards.get(0).getId() != -1) {
-				for (int i = 0; i < choosenCards.size(); i++) {
-					cardsPlayed.add(choosenCards.get(i));
-					if (mHand.contains(choosenCards.get(i))) {
-						mHand.remove(mHand.indexOf(choosenCards.get(i)));
-					}
-				}
-			} else {
-				Log.i(TAG, "No choosen cards");
-			}
-			Log.i(TAG, "Opponent playing " + choosenCards);
-			return choosenCards;
-		} else {
-			return null;
-		}
+		return choosenCards;
 	}
 }
