@@ -5,9 +5,12 @@ import java.util.List;
 import java.util.Random;
 
 import android.content.Context;
+import android.util.Log;
 
 public class Opponent {
-	public ArrayList<Card> hand = new ArrayList<Card>();
+	private static final String TAG = "Baraja";
+	
+	public ArrayList<Card> mHand = new ArrayList<Card>();
 	private String name;
 	private Random r;
 	private static final int NUMBER_OF_NAMES = 11;
@@ -29,29 +32,32 @@ public class Opponent {
 	}
 	
 	public ArrayList<Card> getHand() {
-		return hand;
+		return mHand;
 	}
 	
 	public void setHand(ArrayList<Card> newHand) {
-		hand = newHand;
+		mHand = newHand;
 	}
 	
 	public Card getCard(int id) {
-		return hand.get(id);
+		return mHand.get(id);
 	}
 	
 	public ArrayList<Card> makePlay(ArrayList<Card> cardsPlayed, ArrayList<Card> cardDrawn) {
-		ArrayList<Card> choosenCards = new ArrayList<Card>();
+		ArrayList<Card> choosenCards = GameView.isValidMove(mHand, cardDrawn, cardsPlayed, true);
 		
-		if (GameView.isValidMove(hand, cardDrawn, cardsPlayed, true, choosenCards)) {
-			if (! choosenCards.isEmpty()) {
-				for (Card card : choosenCards) {
-					cardsPlayed.add(card);
-					if (hand.contains(card)) {
-						hand.remove(hand.indexOf(card));
+		if (! choosenCards.isEmpty()) {
+			if (choosenCards.size() != 1 && choosenCards.get(0).getId() != -1) {
+				for (int i = 0; i < choosenCards.size(); i++) {
+					cardsPlayed.add(choosenCards.get(i));
+					if (mHand.contains(choosenCards.get(i))) {
+						mHand.remove(mHand.indexOf(choosenCards.get(i)));
 					}
 				}
+			} else {
+				Log.i(TAG, "No choosen cards");
 			}
+			Log.i(TAG, "Opponent playing " + choosenCards);
 			return choosenCards;
 		} else {
 			return null;

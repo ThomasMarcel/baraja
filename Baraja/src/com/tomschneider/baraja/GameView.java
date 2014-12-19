@@ -237,11 +237,12 @@ public class GameView extends View {
 							x < screenWidth - 15 &&
 							y > screenHeight - endTurnBounds.height() - 15 &&
 							y < screenHeight - 15) {
-						if (isValidMove(choosenCards, cardDrawn, cardsPlayed, false, null)) {
+						ArrayList<Card> cardsToPlay = isValidMove(choosenCards, cardDrawn, cardsPlayed, false);
+						if (cardsToPlay.size() == 1 && cardsToPlay.get(0).getId() == -1) {
+							Log.i(TAG, "Invalid move, not ending turn");
+						} else {
 							Log.i(TAG, "End turn with valid move");
 							endTurn();
-						} else {
-							Log.i(TAG, "Invalid move, not ending turn");
 						}
 					}
 				}
@@ -300,23 +301,23 @@ public class GameView extends View {
 		for (int i = 0; i < NUMBER_OF_OPPONENTS; i++) {
 			opponents[i] = new Opponent(mContext);
 			for (int j = 0; j < initCardsNumber; j++) {
-				drawCard(opponents[i].hand);
+				drawCard(opponents[i].mHand);
 			}
 		}
 	}
 	
-	public static boolean isValidMove(ArrayList<Card> choosenCards, ArrayList<Card> cardDrawn, ArrayList<Card> cardsPlayed, boolean automation, ArrayList<Card> cardsToPlay) {
+	public static ArrayList<Card> isValidMove(ArrayList<Card> mChoosenCards, ArrayList<Card> mCardDrawn, ArrayList<Card> mCardsPlayed, boolean automation) {
 		ArrayList<Card> tempCards = new ArrayList<Card>();
 		ArrayList<Card> wellPlayed = new ArrayList<Card>();
 		
-		if (! cardDrawn.isEmpty()) {
-			if (! choosenCards.isEmpty()) {
-				for (Card card : choosenCards) {
+		if (! mCardDrawn.isEmpty()) {
+			if (! mChoosenCards.isEmpty()) {
+				for (Card card : mChoosenCards) {
 					tempCards.add(card);
 				}
-				tempCards.add(cardDrawn.get(0));
-				if (! cardsPlayed.isEmpty()) {
-					for (Card card : cardsPlayed) {
+				tempCards.add(mCardDrawn.get(0));
+				if (! mCardsPlayed.isEmpty()) {
+					for (Card card : mCardsPlayed) {
 						tempCards.add(card);
 					}
 				}
@@ -346,11 +347,11 @@ public class GameView extends View {
 				}
 				
 				//Log.i(TAG, "Checking for same rank different suit");
-				for (int i = 0; i < choosenCards.size(); i++) {
+				for (int i = 0; i < mChoosenCards.size(); i++) {
 					sequence = 1;
 					for (int j = 0; j < tempCards.size(); j++) {
-						if (choosenCards.get(i).getRank() == tempCards.get(j).getRank() &&
-								choosenCards.get(i).getSuit() != tempCards.get(j).getSuit()) {
+						if (mChoosenCards.get(i).getRank() == tempCards.get(j).getRank() &&
+								mChoosenCards.get(i).getSuit() != tempCards.get(j).getSuit()) {
 							sequence += 1;
 							//Log.i(TAG, "Found a possible match " + choosenCards.get(i).getId() + " - " + tempCards.get(j).getId());
 						} else {
@@ -359,9 +360,9 @@ public class GameView extends View {
 						
 						
 						if (sequence >= MIN_SEQUENCE) {
-							if (! wellPlayed.contains(choosenCards.get(i))) {
-								wellPlayed.add(choosenCards.get(i));
-								Log.i(TAG, "Same rank match, adding " + choosenCards.get(i).getId());
+							if (! wellPlayed.contains(mChoosenCards.get(i))) {
+								wellPlayed.add(mChoosenCards.get(i));
+								Log.i(TAG, "Same rank match, adding " + mChoosenCards.get(i).getId());
 							}
 						}
 					}
@@ -371,29 +372,32 @@ public class GameView extends View {
 				Log.i(TAG, "tempCards: " + tempCards.toString());
 			
 				boolean validMove = true;
-				for (Card card : choosenCards) {
+				for (Card card : mChoosenCards) {
 					if (! automation && ! wellPlayed.contains(card)) {
 						validMove = false;
 					}
 				}
 				
 				if (validMove) {
+					Log.i(TAG, "Valid move");
 					if (automation) {
-						cardsToPlay = wellPlayed;
+						Log.i(TAG, "Well played cards: " + wellPlayed);
 					}
 					Toast.makeText(mContext, "Valid move", Toast.LENGTH_LONG).show();
-					return true;
+					return mChoosenCards;
 				} else {
+					wellPlayed.clear();
+					wellPlayed.add(new Card(-1));
 					Toast.makeText(mContext, "Invalid move", Toast.LENGTH_LONG).show();
-					return false;
+					return wellPlayed;
 				}
 			} else {
 				Log.i(TAG, "Passing turn");
-				return true;
+				return mChoosenCards;
 			}
 		} else {
 			Toast.makeText(mContext, mContext.getString(R.string.error_no_drawn_card), Toast.LENGTH_LONG).show();
-			return false;
+			return null;
 		}
 	}
 
@@ -437,6 +441,7 @@ public class GameView extends View {
 			for (Opponent opponent : opponents) {
 				opponent.makePlay(cardsPlayed, cardDrawn);
 			}
+			Collections.sort(cardsPlayed);
 			mTurnNumber += 1;
 			mTurn = true;
 		}
