@@ -328,19 +328,19 @@ public class GameView extends View {
 					if (tempCards.get(i).getSuit() == tempCards.get(i - 1).getSuit() &&
 							tempCards.get(i).getRank() == tempCards.get(i - 1).getRank() + 1) {
 						sequence += 1;
-						Log.i(TAG, "Sequence between i-i (" + tempCards.get(i - 1).getId() + ") and i (" + tempCards.get(i).getId() + ")");
+						//Log.i(TAG, "Sequence between i-i (" + tempCards.get(i - 1).getId() + ") and i (" + tempCards.get(i).getId() + ")");
 					} else {
 						sequence = 1;
 					}
 				
-					Log.i(TAG, "Sequence: " + sequence);
+					//Log.i(TAG, "Sequence: " + sequence);
 				
 					if (sequence >= MIN_SEQUENCE) {
 						//Log.i(TAG, "Adding well played cards");
 						for (int j = i; j > i - sequence; j--) {
 							if (! wellPlayed.contains(tempCards.get(j))) {
 								wellPlayed.add(tempCards.get(j));
-								Log.i(TAG, "Sequence match, adding " + tempCards.get(j).getId());
+								//Log.i(TAG, "Sequence match, adding " + tempCards.get(j).getId());
 							}
 						}
 					}
@@ -362,7 +362,7 @@ public class GameView extends View {
 						if (sequence >= MIN_SEQUENCE) {
 							if (! wellPlayed.contains(mChoosenCards.get(i))) {
 								wellPlayed.add(mChoosenCards.get(i));
-								Log.i(TAG, "Same rank match, adding " + mChoosenCards.get(i).getId());
+								//Log.i(TAG, "Same rank match, adding " + mChoosenCards.get(i).getId());
 							}
 						}
 					}
@@ -379,7 +379,7 @@ public class GameView extends View {
 				}
 				
 				if (validMove) {
-					Log.i(TAG, "Valid move");
+					//Log.i(TAG, "Valid move");
 					if (automation) {
 						Log.i(TAG, "Well played cards: " + wellPlayed);
 					}
@@ -403,7 +403,7 @@ public class GameView extends View {
 
 	private void endTurn() {
 		//mTurn = false;
-		Log.i(TAG, "GameView.endTurn mTurn: " + mTurn);
+		//Log.i(TAG, "GameView.endTurn mTurn: " + mTurn);
 		if (! hand.isEmpty()) {
 			if (mTurn) {
 				for (GameNotificationListener listener : notificationListeners) {
@@ -420,7 +420,7 @@ public class GameView extends View {
 	}
 	
 	public void setGameNotificationListener(GameNotificationListener listener) {
-		Log.i(TAG, "GameView.setGameNotificationListener");
+		//Log.i(TAG, "GameView.setGameNotificationListener");
 		if (! notificationListeners.contains(listener)) {
 			notificationListeners.add(listener);
 		}
@@ -432,19 +432,18 @@ public class GameView extends View {
 				cardsPlayed.add(choosenCards.get(i));
 			}
 			cardsPlayed.add(cardDrawn.get(0));
-			Collections.sort(cardsPlayed);
-			cardDrawn.clear();
-			choosenCards.clear();
 			mTurn = false;
 		} else {
-			Log.i(TAG, "Opponents playing");
+			//Log.i(TAG, "Opponents playing");
 			for (Opponent opponent : opponents) {
 				opponent.makePlay(cardsPlayed, cardDrawn);
 			}
-			Collections.sort(cardsPlayed);
 			mTurnNumber += 1;
 			mTurn = true;
 		}
+		Collections.sort(cardsPlayed);
+		cardDrawn.clear();
+		choosenCards.clear();
 		invalidate();
 	}
 }
