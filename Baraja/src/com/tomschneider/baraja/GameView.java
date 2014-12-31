@@ -447,7 +447,7 @@ public class GameView extends View {
 				}
 			}
 		} else {
-			Toast.makeText(mContext, "You win!", Toast.LENGTH_LONG).show();
+			Toast.makeText(mContext, mContext.getString(R.string.you_win), Toast.LENGTH_LONG).show();
 			Log.i(TAG, "Yon win!");
 		}
 	}

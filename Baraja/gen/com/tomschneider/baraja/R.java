@@ -71,22 +71,23 @@ public final class R {
         public static final int end_turn_confirmation=0x7f040009;
         public static final int error_no_drawn_card=0x7f040008;
         public static final int hello_world=0x7f040001;
-        public static final int name0=0x7f04000e;
-        public static final int name1=0x7f04000f;
-        public static final int name10=0x7f040018;
-        public static final int name2=0x7f040010;
-        public static final int name3=0x7f040011;
-        public static final int name4=0x7f040012;
-        public static final int name5=0x7f040013;
-        public static final int name6=0x7f040014;
-        public static final int name7=0x7f040015;
-        public static final int name8=0x7f040016;
-        public static final int name9=0x7f040017;
+        public static final int name0=0x7f04000f;
+        public static final int name1=0x7f040010;
+        public static final int name10=0x7f040019;
+        public static final int name2=0x7f040011;
+        public static final int name3=0x7f040012;
+        public static final int name4=0x7f040013;
+        public static final int name5=0x7f040014;
+        public static final int name6=0x7f040015;
+        public static final int name7=0x7f040016;
+        public static final int name8=0x7f040017;
+        public static final int name9=0x7f040018;
         public static final int play=0x7f040005;
         public static final int title_activity_game=0x7f040004;
         public static final int title_activity_main=0x7f040003;
         public static final int title_activity_splash_view=0x7f040002;
         public static final int turn=0x7f04000d;
+        public static final int you_win=0x7f04000e;
     }
     public static final class style {
         /** 
