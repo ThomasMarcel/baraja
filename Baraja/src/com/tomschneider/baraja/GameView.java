@@ -211,7 +211,9 @@ public class GameView extends View {
 					}
 				}
 				
+				// If not playing a card in hand
 				if (movingCardIdx < 0) {
+					// Draw a card from the pile
 					if (cardDrawn.isEmpty() &&
 							x > (screenWidth / 2) - scaledCardW - 5 &&
 							x < (screenWidth / 2) - 5 &&
@@ -220,6 +222,7 @@ public class GameView extends View {
 						drawCard(cardDrawn);
 					}
 					
+					// Get back a played card
 					if (! choosenCards.isEmpty()) {
 						for (int i = 0; i < choosenCards.size(); i++) {
 							if (x > i * (scaledCardW + 5) &&
@@ -232,6 +235,7 @@ public class GameView extends View {
 						}
 					}
 					
+					// Click on end turn button
 					if (x > screenWidth - endTurnBounds.width() - 15 &&
 							x < screenWidth - 15 &&
 							y > screenHeight - endTurnBounds.height() - 15 &&
@@ -253,10 +257,24 @@ public class GameView extends View {
 			break;
 		
 		case MotionEvent.ACTION_UP:
-			if (movingCardIdx >= 0 &&
-					y < ((screenHeight * 3 / 4) - (scaledCardH / 2)) + scaledCardH) {
-				choosenCards.add(hand.get(movingCardIdx));
-				hand.remove(movingCardIdx);
+			if (movingCardIdx >= 0) {
+				if (y < ((screenHeight * 3 / 4) - (scaledCardH / 2)) + scaledCardH) {
+					choosenCards.add(hand.get(movingCardIdx));
+					hand.remove(movingCardIdx);
+				} else {
+					Log.i(TAG, "Moving card " + movingCardIdx + " in hand");
+					for (int i = 0; i < hand.size(); i++) {
+						if (x > (i * (scaledCardW + 5)) - (scaledCardW * 1 / 2) &&
+								x < (i * (scaledCardW + 5)) + (scaledCardW * 3 / 2)) {
+							Card tempCard = hand.get(movingCardIdx);
+							Log.i(TAG, "replacing card " + tempCard.getId());
+							hand.remove(movingCardIdx);
+							hand.add(i, tempCard);
+						} else {
+							Log.i(TAG, x + " not matching [" + ((i * (scaledCardW + 5)) - (scaledCardW * 1 / 2)) + ":" + ((i * (scaledCardW + 5)) + (scaledCardW * 3 / 2)) + "]");
+						}
+					}
+				}
 			}
 			movingCardIdx = -1;
 			break;
