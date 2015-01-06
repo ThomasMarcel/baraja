@@ -16,6 +16,8 @@
     <string name="dialog_ok">OK</string>
     <string name="turn">Turn</string>
     <string name="you_win">You win!</string>
+    <string name="you_lost">You lost...</string>
+    <string name="game_over">Game Over</string>
     
     <string name="name0">Nathan</string>
  	<string name="name1">Sol</string>

@@ -39,11 +39,18 @@ public class GameActivity extends Activity implements GameNotificationListener {
 		// TODO Auto-generated method stub
 		switch (eventId) {
 		case GameNotificationListener.ENDTURN_DIALOG:
-			mEndTurn = EndTurn.newInstance();
+			mEndTurn = EndTurn.newInstance(GameNotificationListener.ENDTURN_DIALOG);
 			mEndTurn.show(getFragmentManager(), TAG);
 			break;
 		case GameNotificationListener.ENDTURN:
 			gameView.setTurn(false);
+			break;
+		case GameNotificationListener.ENDGAME_DIALOG:
+			mEndTurn = EndTurn.newInstance(GameNotificationListener.ENDGAME_DIALOG);
+			mEndTurn.show(getFragmentManager(), TAG);
+			break;
+		case GameNotificationListener.ENDGAME:
+			finish();
 		}
 	}
 }

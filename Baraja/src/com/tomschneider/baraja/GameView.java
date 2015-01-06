@@ -447,7 +447,10 @@ public class GameView extends View {
 				}
 			}
 		} else {
-			Toast.makeText(mContext, mContext.getString(R.string.you_win), Toast.LENGTH_LONG).show();
+			//Toast.makeText(mContext, mContext.getString(R.string.you_win), Toast.LENGTH_LONG).show();
+			for (GameNotificationListener listener : notificationListeners) {
+				listener.onEvent(GameNotificationListener.ENDGAME_DIALOG);
+			}
 			Log.i(TAG, "Yon win!");
 		}
 	}
@@ -485,6 +488,12 @@ public class GameView extends View {
 					if (opponent.getHand().contains(cardsPlayed.get(i))) {
 						opponent.mHand.remove(opponent.mHand.indexOf(cardsPlayed.get(i)));
 					}
+				}
+				if (opponent.mHand.isEmpty()) {
+					for (GameNotificationListener listener : notificationListeners) {
+						listener.onEvent(GameNotificationListener.ENDGAME_DIALOG);
+					}
+					Log.i(TAG, "You lose");
 				}
 			}
 			mTurnNumber += 1;
