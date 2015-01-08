@@ -178,11 +178,11 @@ public class GameView extends View {
 		// Draw the player's hand
 		for (int i = 0; i < hand.size(); i++) {
 			canvas.drawBitmap(hand.get(i).getBitmap(), (float) (i * (scaledCardW + 5)), (float) ((screenHeight - scaledCardH - (endTurnBounds.height() * 2))), mPaint);
-			
-			// If the user clicked on a card, draw an extra card of the same tipe
-			if (i == movingCardIdx) {
-				canvas.drawBitmap(hand.get(i).getBitmap(), movingX - (scaledCardW / 2), movingY - (scaledCardH / 2), mPaint);
-			}
+		}
+		
+		// If the user clicked on a card, draw an extra card of the same tipe
+		if (movingCardIdx >= 0) {
+			canvas.drawBitmap(hand.get(movingCardIdx).getBitmap(), movingX - (scaledCardW / 2), movingY - (scaledCardH / 2), mPaint);
 		}
 		
 		invalidate();
@@ -270,6 +270,7 @@ public class GameView extends View {
 							Log.i(TAG, "replacing card " + tempCard.getId());
 							hand.remove(movingCardIdx);
 							hand.add(i, tempCard);
+							break;
 						} else {
 							Log.i(TAG, x + " not matching [" + ((i * (scaledCardW + 5)) - (scaledCardW * 1 / 2)) + ":" + ((i * (scaledCardW + 5)) + (scaledCardW * 3 / 2)) + "]");
 						}

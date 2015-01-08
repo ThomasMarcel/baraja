@@ -19,16 +19,6 @@
     <string name="you_lost">You lost...</string>
     <string name="game_over">Game Over</string>
     
-    <string name="name0">Nathan</string>
- 	<string name="name1">Sol</string>
- 	<string name="name2">Thomas</string>
- 	<string name="name3">Ixchel</string>
- 	<string name="name4">Flor</string>
- 	<string name="name5">Arthur</string>
- 	<string name="name6">Bub</string>
- 	<string name="name7">Logan</string>
- 	<string name="name8">Scott</string>
- 	<string name="name9">Ororo</string>
- 	<string name="name10">Remy</string>
+    <string name="opponent_names">Mu,Aldebaran,Saga,Deathmask,Aiolia,Shaka,Dohko,Milo,Aiolos,Shura,Camus,Aphrodite</string>
 
 </resources>

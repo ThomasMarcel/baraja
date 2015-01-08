@@ -1,6 +1,7 @@
 package com.tomschneider.baraja;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -12,7 +13,7 @@ public class Opponent {
 	
 	public ArrayList<Card> mHand = new ArrayList<Card>();
 	private String name;
-	private Random r;
+	private Random r = new Random();
 	private static final int NUMBER_OF_NAMES = 11;
 	private Context mContext;
 	
@@ -20,7 +21,9 @@ public class Opponent {
 		mContext = context;
 		
 		//name = mContext.getString(mContext.getResources().getIdentifier("name" + r.nextInt(NUMBER_OF_NAMES - 1), "name", mContext.getPackageCodePath()));
-		name = "Thomas";
+		List<String> names = Arrays.asList(mContext.getString(R.string.opponent_names).split(","));
+		
+		name = names.get(r.nextInt(names.size() - 1));
 	}
 	
 	public void setName(String newName) {
