@@ -263,16 +263,28 @@ public class GameView extends View {
 					hand.remove(movingCardIdx);
 				} else {
 					Log.i(TAG, "Moving card " + movingCardIdx + " in hand");
-					for (int i = 0; i < hand.size(); i++) {
-						if (x > (i * (scaledCardW + 5)) - (scaledCardW * 1 / 2) &&
-								x < (i * (scaledCardW + 5)) + (scaledCardW * 3 / 2)) {
-							Card tempCard = hand.get(movingCardIdx);
-							Log.i(TAG, "replacing card " + tempCard.getId());
-							hand.remove(movingCardIdx);
-							hand.add(i, tempCard);
-							break;
-						} else {
-							Log.i(TAG, x + " not matching [" + ((i * (scaledCardW + 5)) - (scaledCardW * 1 / 2)) + ":" + ((i * (scaledCardW + 5)) + (scaledCardW * 3 / 2)) + "]");
+					if (x < scaledCardW / 2) {
+						Card tempCard = hand.get(movingCardIdx);
+						Log.i(TAG, "replacing card at position 0");
+						hand.remove(movingCardIdx);
+						hand.add(0, tempCard);
+					} else {
+						for (int i = 0; i < hand.size(); i++) {
+							if (movingCardIdx != i &&
+									x > (i * (scaledCardW + 5)) + (scaledCardW * 1 / 2) &&
+									x < (i * (scaledCardW + 5)) + (scaledCardW * 3 / 2)) {
+								Card tempCard = hand.get(movingCardIdx);
+								hand.remove(movingCardIdx);
+								if (i < movingCardIdx) {
+									hand.add(i + 1, tempCard);
+									Log.i(TAG, "replacing card at position " + (i + 1));
+								} else {
+									hand.add(i, tempCard);
+									Log.i(TAG, "replacing card at position " + i);
+								}
+							} else {
+								Log.i(TAG, x + " not matching [" + ((i * (scaledCardW + 5)) - (scaledCardW * 1 / 2)) + ":" + ((i * (scaledCardW + 5)) + (scaledCardW * 3 / 2)) + "]");
+							}
 						}
 					}
 				}
