@@ -122,6 +122,9 @@ public class GameView extends View {
 				canvas.drawBitmap(cardBack, (float) (cardX + (j * 15)),  (float) cardY, mPaint);
 			}
 			//Log.i(TAG, "Cards in opponent's hand (" + opponents[i].getHand().size() + "): " + opponents[i].getHand());
+			int cardX = (screenWidth - ((scaledCardW + (opponents[i].getHand().size() * 15)))) / (opponents.length + 1);
+			canvas.drawText(opponents[i].getName(), cardX, cardY, mPaint);
+			Log.i(TAG, "Opponent's name " + opponents[i].getName() + " at [" + cardX + ":" + cardY + "]");
 		}
 		
 		// Draw the end turn button
