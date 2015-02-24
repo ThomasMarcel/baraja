@@ -39,10 +39,10 @@ public class GameView extends View {
 	
 	private int scaledCardW, scaledCardH;
 	
-	private Paint mPaint, textPaint;
+	private Paint mPaint, textPaint, smallTextPaint;
 	
 	private static String stringEndTurn;
-	private Rect endTurnBounds;
+	private Rect endTurnBounds, opponentNameBounds, turnBounds;
 	private static String stringTurn;
 	
 	private Bitmap cardBack;
@@ -58,7 +58,7 @@ public class GameView extends View {
 	
 	ArrayList<GameNotificationListener> notificationListeners = new ArrayList<GameNotificationListener>();
 	
-	private static final int NUMBER_OF_OPPONENTS = 1;
+	private static final int NUMBER_OF_OPPONENTS = 2;
 	private Opponent[] opponents;
 
 	public GameView(Context context) {
@@ -82,6 +82,13 @@ public class GameView extends View {
 		textPaint.setColor(Color.WHITE);
 		endTurnBounds = new Rect();
 		textPaint.getTextBounds(stringEndTurn, 0, stringEndTurn.length(), endTurnBounds);
+		
+		smallTextPaint = new Paint();
+		smallTextPaint.setAntiAlias(true);
+		smallTextPaint.setTextAlign(Paint.Align.LEFT);
+		smallTextPaint.setStyle(Paint.Style.STROKE);
+		smallTextPaint.setTextSize(scale * 15);
+		smallTextPaint.setColor(Color.WHITE);
 		
 		opponents = new Opponent[NUMBER_OF_OPPONENTS];
 		
@@ -110,20 +117,27 @@ public class GameView extends View {
 		canvas.drawColor(Color.DKGRAY);
 		mPaint = new Paint();
 		
+		turnBounds = new Rect();
+		smallTextPaint.getTextBounds(stringTurn + " " + mTurnNumber, 0, (stringTurn + " " + mTurnNumber).length(), turnBounds);
+		
 		// Draw the turn number
-		canvas.drawText(stringTurn + " " + mTurnNumber, 5.0f, 5.0f + endTurnBounds.height(), textPaint);
+		canvas.drawText(stringTurn + " " + mTurnNumber, 5.0f, screenHeight - 15, smallTextPaint);
 		
 		// Draw the opponent's hands
 		for (int i = 0; i < opponents.length; i++) {
 			//int cardX = (screenWidth / (opponents.length + 1));
-			int cardY = 5 + endTurnBounds.height();
+			opponentNameBounds = new Rect();
+			smallTextPaint.getTextBounds(opponents[i].getName(), 0, opponents[i].getName().length(), opponentNameBounds);
+			
+			int cardY = 15 + opponentNameBounds.height();
 			for (int j = 0; j < opponents[i].getHand().size(); j++) {
 				int cardX = (screenWidth - ((scaledCardW + (opponents[i].getHand().size() * 15)))) / (opponents.length + 1);
 				canvas.drawBitmap(cardBack, (float) (cardX + (j * 15)),  (float) cardY, mPaint);
 			}
+			
 			//Log.i(TAG, "Cards in opponent's hand (" + opponents[i].getHand().size() + "): " + opponents[i].getHand());
 			int cardX = (screenWidth - ((scaledCardW + (opponents[i].getHand().size() * 15)))) / (opponents.length + 1);
-			canvas.drawText(opponents[i].getName(), cardX, cardY, mPaint);
+			canvas.drawText(opponents[i].getName(), cardX, opponentNameBounds.height() + 5, smallTextPaint);
 			Log.i(TAG, "Opponent's name " + opponents[i].getName() + " at [" + cardX + ":" + cardY + "]");
 		}
 		
